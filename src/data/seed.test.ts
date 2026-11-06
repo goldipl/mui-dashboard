@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createSeedData } from './seed';
+import { buildHeadline, createSeedData } from './seed';
 import { SITES } from './sites';
 
 const NOW = new Date('2026-11-06T10:00:00Z').getTime();
@@ -26,6 +26,21 @@ describe('createSeedData', () => {
       if (article.featuredImageId) expect(photoIds.has(article.featuredImageId)).toBe(true);
       expect(SITES.find((s) => s.id === article.siteId)?.categories).toContain(article.category);
     }
+  });
+
+  it('builds headlines with subject–verb agreement', () => {
+    expect(buildHeadline('Basketball champions', 'targets', 'a new season')).toBe('Basketball champions target a new season');
+    expect(buildHeadline('Veteran striker', 'targets', 'a new season')).toBe('Veteran striker targets a new season');
+    expect(buildHeadline('Title favourites', 'clinches', 'the cup')).toBe('Title favourites clinch the cup');
+    expect(buildHeadline('Researchers', 'misses out on', 'funding')).toBe('Researchers miss out on funding');
+    expect(buildHeadline('Regulators', 'releases', 'new rules')).toBe('Regulators release new rules');
+  });
+
+  it('publishes articles recently and never in the future', () => {
+    const { articles } = createSeedData(NOW);
+    const published = articles.filter((a) => a.publishedAt);
+    expect(published.every((a) => new Date(a.publishedAt!).getTime() <= NOW)).toBe(true);
+    expect(published.some((a) => NOW - new Date(a.publishedAt!).getTime() < 24 * 3_600_000)).toBe(true);
   });
 
   it('schedules future articles only', () => {

@@ -18,7 +18,10 @@ import { AUTHORS, CURRENT_USER_ID, SITES } from './sites';
 const HOUR = 3_600_000;
 const DAY = 24 * HOUR;
 
-/** Headline building blocks per site: `subject + action + object`. */
+/**
+ * Headline building blocks per site: `subject + action + object`.
+ * Actions use the singular verb form; subjects ending in "s" are treated as plural (see `buildHeadline`).
+ */
 const HEADLINES: Record<SiteId, { subjects: string[]; actions: string[]; objects: string[] }> = {
   herald: {
     subjects: ['Parliament', 'The prime minister', 'Opposition leaders', 'City council', 'EU ministers', 'The constitutional court', 'Regional governors', 'Health officials'],
@@ -42,7 +45,7 @@ const HEADLINES: Record<SiteId, { subjects: string[]; actions: string[]; objects
   },
   lifestyle: {
     subjects: ['Nutritionists', 'Travel experts', 'Award-winning chef', 'City museums', 'Designers', 'Sleep researchers', 'Weekend guide', 'Festival organisers'],
-    actions: ['recommend', 'reveal', 'reinvent', 'celebrate', 'rediscover', 'explore', 'share'],
+    actions: ['recommends', 'reveals', 'reinvents', 'celebrates', 'rediscovers', 'explores', 'shares'],
     objects: ['seasonal superfoods', 'hidden coastal towns', 'classic comfort dishes', 'modern art collections', 'sustainable wardrobe staples', 'evening routines', 'mountain escapes', 'street food traditions'],
   },
 };
@@ -89,6 +92,9 @@ const PHOTO_SUBJECTS = [
   'Wind turbines in a field', 'Coffee shop interior', 'Press conference podium', 'Tennis court from above',
   'Electric car charging', 'Old town square', 'Airport departure hall', 'Laboratory researcher',
 ];
+
+/** Each subject appears three times in the library, as different shots. */
+const PHOTO_VARIANTS = ['', ' – wide shot', ' – close-up'];
 
 const PHOTO_CREDITS = ['NewsPix Agency', 'Staff photographer', 'Global Image Network', 'Freelance contributor', 'Northlight Photo Desk'];
 const LICENSES: PhotoLicense[] = ['editorial', 'royalty_free', 'rights_managed', 'creative_commons'];
@@ -143,7 +149,7 @@ function buildPhotos(rand: Random, now: number): Photo[] {
     const siteTags = TAGS[rand.pick(SITES).id];
     return {
       id,
-      title: index < PHOTO_SUBJECTS.length ? subject : `${subject} #${Math.floor(index / PHOTO_SUBJECTS.length) + 1}`,
+      title: `${subject}${PHOTO_VARIANTS[Math.floor(index / PHOTO_SUBJECTS.length) % PHOTO_VARIANTS.length]}`,
       caption: `${subject}. Photo taken for the newsroom archive.`,
       url: photoUrl(seed, width, height),
       thumbnailUrl: photoUrl(seed, landscape ? 480 : 340, landscape ? 300 : 476),
@@ -186,10 +192,23 @@ function buildVideos(rand: Random, now: number): Video[] {
 
 function pickStatus(rand: Random, ageDays: number): ArticleStatus {
   if (ageDays < 0) return 'scheduled';
-  if (ageDays < 1) return rand.pick(['draft', 'draft', 'in_review', 'in_review', 'published'] as const);
+  if (ageDays < 1) return rand.pick(['draft', 'in_review', 'in_review', 'published', 'published'] as const);
   if (ageDays < 3) return rand.pick(['draft', 'in_review', 'published', 'published', 'published'] as const);
   return rand.chance(0.08) ? 'archived' : rand.chance(0.07) ? 'draft' : 'published';
 }
+
+/**
+ * Builds a headline with subject–verb agreement. Actions are written for a singular subject
+ * ("targets"), so for plural subjects ("Basketball champions") the first verb is made plural ("target").
+ */
+export function buildHeadline(subject: string, action: string, object: string): string {
+  const isPlural = subject.endsWith('s');
+  const [verb, ...rest] = action.split(' ');
+  const pluralVerb = /(ch|sh|ss|x|z)es$/.test(verb) ? verb.slice(0, -2) : verb.replace(/s$/, '');
+  return `${subject} ${[isPlural ? pluralVerb : verb, ...rest].join(' ')} ${object}`;
+}
+
+const SCHEDULED_COUNT = 8;
 
 function buildArticles(rand: Random, now: number, photos: Photo[]): Article[] {
   const articles: Article[] = [];
@@ -198,16 +217,23 @@ function buildArticles(rand: Random, now: number, photos: Photo[]): Article[] {
   for (let index = 0; index < total; index += 1) {
     const site = SITES[index % SITES.length];
     const parts = HEADLINES[site.id];
-    const title = `${rand.pick(parts.subjects)} ${rand.pick(parts.actions)} ${rand.pick(parts.objects)}`;
-    // Spread articles over the last 30 days with a handful scheduled in the future.
-    const ageDays = index < 8 ? -rand.int(1, 6) / 2 : (index / total) * 30 + rand.next() * 0.8 - 0.4;
+    const title = buildHeadline(rand.pick(parts.subjects), rand.pick(parts.actions), rand.pick(parts.objects));
+    // A handful of articles are scheduled in the future; the rest are spread over the last 30 days.
+    const ageDays =
+      index < SCHEDULED_COUNT
+        ? -rand.int(1, 6) / 2
+        : Math.max(0.05, ((index - SCHEDULED_COUNT) / (total - SCHEDULED_COUNT)) * 30 + rand.next() * 0.8 - 0.4);
     const createdAt = now - Math.max(ageDays, 0.05) * DAY - rand.int(1, 6) * HOUR;
     const status = pickStatus(rand, ageDays);
     const authors = AUTHORS.filter((author) => author.siteIds.includes(site.id));
     const author = rand.pick(authors);
     const id = `art-${String(index + 1).padStart(4, '0')}`;
     const priority: ArticlePriority = rand.chance(0.04) ? 'breaking' : rand.chance(0.2) ? 'high' : rand.chance(0.15) ? 'low' : 'normal';
-    const publishedAt = status === 'published' || status === 'archived' ? createdAt + rand.int(1, 5) * HOUR : undefined;
+    // Never publish in the future: recent articles go live at most 10 minutes before "now".
+    const publishedAt =
+      status === 'published' || status === 'archived'
+        ? Math.min(createdAt + rand.int(1, 5) * HOUR, now - 10 * 60_000)
+        : undefined;
     const scheduledAt = status === 'scheduled' ? now + Math.abs(ageDays) * DAY + rand.int(1, 8) * HOUR : undefined;
     const ageFactor = Math.max(1, 30 - ageDays);
     const views = publishedAt ? Math.round(rand.int(400, 9000) * (priority === 'breaking' ? 6 : 1) * (ageFactor / 10)) : 0;

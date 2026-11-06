@@ -1,7 +1,8 @@
 import type { SeedData } from '../data/seed';
 import type { ActivityEvent, Article, ArticleStatus, EditorProfile, Photo, Video } from '../types';
 
-export const STATE_VERSION = 1;
+/** Bump when the persisted state or the demo data changes; stored data with another version is replaced. */
+export const STATE_VERSION = 2;
 export const MAX_ACTIVITY = 100;
 
 export interface NewsroomState extends SeedData {
