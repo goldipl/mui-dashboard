@@ -7,6 +7,8 @@ libraries, keep their own profile up to date, and move stories through the edito
 
 **Live demo:** https://goldipl.github.io/mui-dashboard/
 
+![Newsroom Dashboard – overview page](docs/screenshots/dashboard.png)
+
 ![React](https://img.shields.io/badge/React-19.3-61dafb?logo=react&logoColor=white)
 ![Material UI](https://img.shields.io/badge/Material_UI-9.5-007fff?logo=mui&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178c6?logo=typescript&logoColor=white)
@@ -19,6 +21,7 @@ libraries, keep their own profile up to date, and move stories through the edito
 ## Table of contents
 
 - [Features](#features)
+- [Screenshots](#screenshots)
 - [Tech stack](#tech-stack)
 - [Getting started](#getting-started)
 - [Available scripts](#available-scripts)
@@ -49,6 +52,30 @@ Cross-cutting features:
 - Global article search in the top bar, a notifications menu and a *Reset demo data* action.
 - A background **scheduler** that publishes scheduled articles automatically when their time comes.
 - Every page is lazy-loaded (code splitting), so the charts and the data grid load only when needed.
+
+## Screenshots
+
+| Publisher panel – workflow board | Article editor |
+| --- | --- |
+| ![Publisher panel with Draft, In review, Scheduled and Published columns](docs/screenshots/publisher.png) | ![Article editor with block-based body and publishing sidebar](docs/screenshots/editor.png) |
+| **Article preview** | **SEO & social previews** |
+| ![Article preview as readers will see it on the site](docs/screenshots/editor-preview.png) | ![Meta tags with search result and social card previews](docs/screenshots/editor-seo.png) |
+| **Articles – all sites** | **Sites – articles per publication** |
+| ![Articles data grid with status tabs and filters](docs/screenshots/articles.png) | ![Tech Pulse site view with KPIs, trend and category chart](docs/screenshots/sites.png) |
+| **Photo library** | **Video library** |
+| ![Photo library grid with license and tag filters](docs/screenshots/photos.png) | ![Video library with status, duration and resolution](docs/screenshots/videos.png) |
+| **Editor profile** | **Dark mode** |
+| ![Editor profile with publication statistics](docs/screenshots/profile.png) | ![Dashboard in dark mode](docs/screenshots/dashboard-dark.png) |
+
+<p align="center">
+  <img src="docs/screenshots/mobile.png" alt="Dashboard on a phone" width="300" /><br />
+  <em>Responsive layout on a phone</em>
+</p>
+
+The screenshots are generated automatically, so they always match the current UI. To regenerate them, run
+`npm run screenshots`. The command builds the app, serves it with `vite preview`, and captures every page in an
+installed Microsoft Edge (or Chrome with `SCREENSHOT_BROWSER=chrome`) through `playwright-core`. The images are
+saved to `docs/screenshots/`.
 
 ## Tech stack
 
@@ -122,6 +149,7 @@ npm run preview    # http://localhost:4173/mui-dashboard/
 | `npm run typecheck` | Run the TypeScript compiler without emitting files. |
 | `npm test` | Run the test suite once. |
 | `npm run test:watch` | Run tests in watch mode. |
+| `npm run screenshots` | Build the app and regenerate the README screenshots in `docs/screenshots/`. |
 
 ## Project structure
 
@@ -147,7 +175,8 @@ src/
 ├── theme/               # MUI theme and colour-mode provider
 ├── types/               # Domain model (Article, Photo, Video, EditorProfile…)
 └── utils/               # Pure helpers: formatting, slugs, workflow rules, image resizing
-docs/                    # Project documentation
+docs/                    # Project documentation and screenshots
+scripts/                 # Developer scripts (screenshot generator)
 ```
 
 ## Demo data and persistence
@@ -172,7 +201,7 @@ All site names use the reserved `.example` domain, and all people in the dataset
 npm test
 ```
 
-The suite (55 tests) covers:
+The suite (57 tests) covers:
 
 - **Pure logic**: slug generation, text statistics, workflow transitions and publishing validation, reducer
   behaviour, filtering and CSV export, profile validation, and the determinism of the demo data.

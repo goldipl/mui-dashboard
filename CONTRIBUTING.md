@@ -111,3 +111,5 @@ Rules:
 2. Use a Conventional Commit style title for the PR, because it becomes the squash commit message.
 3. Describe **what** changed and **why**. Add screenshots for UI changes.
 4. Update the documentation (`README.md`, `docs/`) and `CHANGELOG.md` when behaviour changes.
+5. After visible UI changes, run `npm run screenshots` and commit the updated images in `docs/screenshots/`.
+   It needs Microsoft Edge or Google Chrome installed.

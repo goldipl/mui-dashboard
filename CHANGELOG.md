@@ -12,6 +12,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Automatic deployment to GitHub Pages (`.github/workflows/deploy.yml`).
 - Support for serving the app from a sub-path via the `BASE_PATH` build variable (Vite `base` and router
   `basename`).
+- README screenshots and an `npm run screenshots` script that regenerates them with playwright-core.
+
+### Fixed
+
+- Publisher board cards were squashed to their image when a column hit its height limit; the column now
+  scrolls instead.
+- The Publisher board now shows all four columns side by side from the `lg` breakpoint.
+- Demo headlines use correct subject–verb agreement ("Basketball champions target…").
+- Demo data no longer leaves the newest days without published articles, and never publishes in the future.
+- Demo photo titles no longer end with placeholder numbers.
+- Dark mode: contained primary buttons use dark text for sufficient contrast.
+- The last date label of the publishing activity chart is no longer truncated.
+- On phones, the top bar shows a search button instead of a field that is too narrow to use.
+
+### Changed
+
+- Persisted state version bumped to 2, so browsers with old demo data load the corrected dataset.
 
 ## 1.0.0 - 2026-11-06
 
