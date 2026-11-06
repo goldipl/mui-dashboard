@@ -115,6 +115,13 @@ Routes are defined in [`src/app/routes.tsx`](../src/app/routes.tsx) and use the 
 Filters that are worth sharing (the article filters, the profile tab) live in the URL. Short-lived UI state
 (dialogs, selection) lives in component state.
 
+### Sub-path hosting
+
+The app can be served from a sub-path, as on GitHub Pages (`/mui-dashboard/`). The `BASE_PATH` environment
+variable sets Vite's `base`. The router receives `import.meta.env.BASE_URL` as its `basename`, so every
+`<Link>` and `navigate()` call stays relative to it. Anything outside the router, such as static asset URLs,
+must be built from `import.meta.env.BASE_URL` instead of a hard-coded `/`.
+
 ## Article editor
 
 [`ArticleEditorPage`](../src/features/publisher/editor/ArticleEditorPage.tsx) chooses which article to edit, and

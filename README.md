@@ -5,6 +5,8 @@ One newsroom runs five publications. Editors can manage articles for every site,
 libraries, keep their own profile up to date, and move stories through the editorial workflow in the
 **Publisher panel**, which includes a full article editor.
 
+**Live demo:** https://goldipl.github.io/mui-dashboard/
+
 ![React](https://img.shields.io/badge/React-19.3-61dafb?logo=react&logoColor=white)
 ![Material UI](https://img.shields.io/badge/Material_UI-9.5-007fff?logo=mui&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178c6?logo=typescript&logoColor=white)
@@ -88,6 +90,26 @@ npm run preview    # serve the production build locally
 
 The app is a static single-page application, so `dist/` can be deployed to any static host (Netlify, Vercel, GitHub
 Pages, S3 and others). Configure the host to fall back to `index.html` so client-side routes work.
+
+### Deployment to GitHub Pages
+
+Every push to `main` deploys the app to **https://goldipl.github.io/mui-dashboard/** through the
+[`deploy.yml`](.github/workflows/deploy.yml) workflow. You can also start it manually from the **Actions** tab.
+The workflow:
+
+1. runs the tests,
+2. builds with `BASE_PATH=/mui-dashboard`, so assets and routes are served from the repository sub-path,
+3. copies `index.html` to `404.html`, so deep links such as `/mui-dashboard/publisher` work after a refresh,
+4. publishes `dist/` with `actions/deploy-pages`.
+
+One-time setup: in **Settings → Pages**, set **Source** to **GitHub Actions**.
+
+To test a sub-path build locally:
+
+```bash
+BASE_PATH=/mui-dashboard npm run build
+npm run preview    # http://localhost:4173/mui-dashboard/
+```
 
 ## Available scripts
 
