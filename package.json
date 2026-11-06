@@ -16,6 +16,7 @@
     "typecheck": "tsc -b --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "screenshots": "vite build && node scripts/screenshots.mjs",
     "prepare": "husky"
   },
   "dependencies": {
@@ -47,6 +48,7 @@
     "globals": "^16.0.0",
     "husky": "^9.1.7",
     "jsdom": "^31.0.0",
+    "playwright-core": "^1.65.0",
     "typescript": "~6.0.0",
     "typescript-eslint": "^8.72.1",
     "vite": "^8.3.6",
