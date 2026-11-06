@@ -33,7 +33,7 @@ function Logo({ compact }: { compact: boolean }) {
     <Stack direction="row" spacing={1.25} sx={{ alignItems: 'center', px: compact ? 0 : 1, justifyContent: compact ? 'center' : 'flex-start' }}>
       <Box
         component="img"
-        src="/favicon.svg"
+        src={`${import.meta.env.BASE_URL}favicon.svg`}
         alt=""
         sx={{ width: 34, height: 34, borderRadius: 2, flexShrink: 0 }}
       />

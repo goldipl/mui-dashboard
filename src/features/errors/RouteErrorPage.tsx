@@ -21,7 +21,7 @@ export function RouteErrorPage() {
       </Typography>
       <Typography sx={{ color: 'text.secondary', maxWidth: 520 }}>{message}</Typography>
       <Stack direction="row" spacing={1}>
-        <Button variant="contained" href="/">
+        <Button variant="contained" href={import.meta.env.BASE_URL}>
           Back to dashboard
         </Button>
         <Button onClick={() => window.location.reload()}>Reload</Button>

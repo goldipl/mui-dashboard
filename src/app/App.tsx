@@ -4,7 +4,8 @@ import { NewsroomProvider } from '../store/NewsroomProvider';
 import { ColorModeProvider } from '../theme/ColorModeProvider';
 import { routes } from './routes';
 
-const router = createBrowserRouter(routes);
+// Vite exposes the configured `base` (e.g. `/mui-dashboard/` on GitHub Pages) as BASE_URL.
+const router = createBrowserRouter(routes, { basename: import.meta.env.BASE_URL });
 
 export function App() {
   return (
