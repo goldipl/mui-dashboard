@@ -166,7 +166,8 @@ export default function DashboardPage() {
                 yAxis={[{ tickMinStep: 1 }]}
                 series={perSiteSeries}
                 grid={{ horizontal: true }}
-                margin={{ left: 0, right: 16 }}
+                // Extra right margin so the last date label is not truncated.
+                margin={{ left: 0, right: 28 }}
                 slotProps={{ legend: { position: { vertical: 'top', horizontal: 'center' } } }}
               />
             </CardContent>
