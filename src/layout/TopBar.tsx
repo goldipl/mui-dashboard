@@ -93,7 +93,8 @@ export function TopBar({ isDesktop, onOpenMobileNav }: TopBarProps) {
           role="search"
           onSubmit={handleSearch}
           sx={(theme) => ({
-            display: 'flex',
+            // On phones there is no room for a usable field; a search icon opens the Articles page instead.
+            display: { xs: 'none', sm: 'flex' },
             alignItems: 'center',
             gap: 1,
             px: 1.5,
@@ -114,6 +115,9 @@ export function TopBar({ isDesktop, onOpenMobileNav }: TopBarProps) {
             inputProps={{ 'aria-label': 'Search articles' }}
           />
         </Box>
+        <IconButton onClick={() => navigate('/articles')} aria-label="Search articles" sx={{ display: { xs: 'inline-flex', sm: 'none' } }}>
+          <SearchRoundedIcon />
+        </IconButton>
 
         <Box sx={{ flex: 1 }} />
 
