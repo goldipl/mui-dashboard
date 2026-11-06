@@ -13,7 +13,8 @@ export function createAppTheme(mode: PaletteMode): Theme {
   const theme = createTheme({
     palette: {
       mode,
-      primary: { main: isDark ? '#7c9cff' : '#1f4fd8' },
+      // The light blue used in dark mode needs dark text on contained buttons for sufficient contrast.
+      primary: isDark ? { main: '#7c9cff', contrastText: '#0d1117' } : { main: '#1f4fd8' },
       secondary: { main: isDark ? '#f472b6' : '#be185d' },
       error: { main: isDark ? '#f87171' : '#d32f2f' },
       background: isDark ? { default: '#0d1117', paper: '#151b23' } : { default: '#f4f6fa', paper: '#ffffff' },
