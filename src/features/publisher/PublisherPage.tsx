@@ -133,7 +133,7 @@ export default function PublisherPage() {
         sx={{
           display: 'grid',
           gap: 2,
-          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', xl: 'repeat(4, 1fr)' },
+          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, minmax(0, 1fr))' },
           mb: 3,
         }}
       >
@@ -157,7 +157,7 @@ export default function PublisherPage() {
                 display: 'flex',
                 flexDirection: 'column',
                 minHeight: 320,
-                maxHeight: { xl: 'calc(100vh - 260px)' },
+                maxHeight: { lg: 'calc(100vh - 260px)' },
                 transition: 'background-color .15s',
               }}
             >
@@ -169,7 +169,8 @@ export default function PublisherPage() {
               <Typography variant="caption" sx={{ px: 1.75, color: 'text.secondary' }}>
                 {column.hint}
               </Typography>
-              <Stack spacing={1.25} sx={{ p: 1.25, overflowY: 'auto', flex: 1 }}>
+              {/* flexShrink: 0 keeps cards at full height – the column scrolls instead of squashing them. */}
+              <Stack spacing={1.25} sx={{ p: 1.25, overflowY: 'auto', flex: 1, '& > *': { flexShrink: 0 } }}>
                 {column.items.length === 0 ? (
                   <Typography variant="body2" sx={{ color: 'text.disabled', textAlign: 'center', py: 4 }}>
                     Drop articles here
